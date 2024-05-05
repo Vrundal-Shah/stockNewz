@@ -1,29 +1,58 @@
 import requests
 
 
-class Movie(object):
-    def __init__(self, omdb_json, detailed=False):
-        if detailed:
-            self.genres = omdb_json["Genre"]
-            self.director = omdb_json["Director"]
-            self.actors = omdb_json["Actors"]
-            self.plot = omdb_json["Plot"]
-            self.awards = omdb_json["Awards"]
+# class Movie(object):
+#     def __init__(self, alpha_json, detailed=False):
+#         if detailed:
+#             # self.genres = omdb_json["Genre"]
+#             # self.director = omdb_json["Director"]
+#             # self.actors = omdb_json["Actors"]
+#             # self.plot = omdb_json["Plot"]
+#             # self.awards = omdb_json["Awards"]
 
-        self.title = omdb_json["Title"]
-        self.year = omdb_json["Year"]
-        self.imdb_id = omdb_json["imdbID"]
-        self.type = "Movie"
-        self.poster_url = omdb_json["Poster"]
+#         # self.title = omdb_json["Title"]
+#         # self.year = omdb_json["Year"]
+#         # self.imdb_id = omdb_json["imdbID"]
+#         # self.type = "Movie"
+#         # self.poster_url = omdb_json["Poster"]
+
+#     def __repr__(self):
+#         return self.title
+
+class News(object):
+    def __init__(self, alpha_json, detailed=False):
+        # if detailed:
+            # self.genres = omdb_json["Genre"]
+            # self.director = omdb_json["Director"]
+            # self.actors = omdb_json["Actors"]
+            # self.plot = omdb_json["Plot"]
+            # self.awards = omdb_json["Awards"]
+
+        # self.title = omdb_json["Title"]
+        # self.year = omdb_json["Year"]
+        # self.imdb_id = omdb_json["imdbID"]
+        # self.type = "Movie"
+        # self.poster_url = omdb_json["Poster"]
+        self.title = alpha_json["title"]
+        self.url = alpha_json["url"]
+        self.time_published = alpha_json["time_published"]
+        self.authors = alpha_json["authors"]
+        self.summary = alpha_json["summary"]
+        self.banner_image = alpha_json["banner_image"]
+        self.source = alpha_json["source"]
+        self.topics = alpha_json["topics"]
+        self.ticker_sentiment = alpha_json["ticker_sentiment"]
+        self.overall_sentiment_label = alpha_json["overall_sentiment_label"]
+
 
     def __repr__(self):
         return self.title
 
 
-class MovieClient(object):
+class StocksClient(object):
     def __init__(self, api_key):
         self.sess = requests.Session()
-        self.base_url = f"http://www.omdbapi.com/?apikey={api_key}&r=json&type=movie&"
+        self.base_url = f"https://www.alphavantage.co/query?apikey={api_key}&"
 
     def search(self, search_string):
         """
