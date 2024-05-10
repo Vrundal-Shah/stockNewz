@@ -1,3 +1,2 @@
 # Stores all configuration values
-SECRET_KEY = 'Xfyz4SWT'
-MONGODB_HOST = 'mongodb+srv://aryan7m:55t8JQtQxwk8A0yv@cluster0.gfsejh0.mongodb.net/Project0?retryWrites=true&w=majority'
+# SECRET_KEY = '76550f71a12afcc978b7c7d48bfaf1dcc28649b9bdcfc337'

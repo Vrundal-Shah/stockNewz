@@ -126,7 +126,7 @@ class StocksClient(object):
 if __name__ == "__main__":
     import os
 
-    client = MovieClient(os.environ.get("OMDB_API_KEY"))
+    client = StocksClient(os.environ.get("API_KEY"))
 
     movies = client.search("guardians")
 

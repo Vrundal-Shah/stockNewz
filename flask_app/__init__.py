@@ -18,7 +18,7 @@ import os
 import urllib.parse
 
 # local
-from .client import MovieClient
+from .client import StocksClient
 
 if os.getenv('API_KEY'):
     API_KEY = os.getenv('API_KEY')
@@ -26,10 +26,10 @@ if os.getenv('API_KEY'):
 db = MongoEngine()
 login_manager = LoginManager()
 bcrypt = Bcrypt()
-movie_client = MovieClient(API_KEY)
+stocks_client = StocksClient(API_KEY)
 
 from .users.routes import users
-from .stocks.routes import movies
+from .stocks.routes import stocks
 
 def custom_404(e):
     return render_template("404.html"), 404
@@ -39,25 +39,26 @@ def create_app(test_config=None):
     app = Flask(__name__)
 
     app.config["MONGODB_HOST"] = os.getenv("MONGO_URI")
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     if test_config is not None:
         app.config.update(test_config)
 
     parsed = urllib.parse.urlparse(os.getenv("MONGO_URI"))
 
-    app.config["MONGODB_SETTINGS"] = {
-        'db': 'Cluster0',  # Removes the leading '/' from the path
-        'host': parsed.hostname,
-        'port': parsed.port,
-        'username': parsed.username,
-        'password': parsed.password
-    }
+    # app.config["MONGODB_SETTINGS"] = {
+    #     'db': 'Cluster0',  # Removes the leading '/' from the path
+    #     'host': parsed.hostname,
+    #     'port': parsed.port,
+    #     'username': parsed.username,
+    #     'password': parsed.password
+    # }
 
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
 
     app.register_blueprint(users)
-    app.register_blueprint(movies)
+    app.register_blueprint(stocks)
     app.register_error_handler(404, custom_404)
 
     login_manager.login_view = "users.login"
