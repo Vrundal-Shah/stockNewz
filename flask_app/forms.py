@@ -3,7 +3,7 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from werkzeug.utils import secure_filename
-from wtforms import StringField, SubmitField, TextAreaField, PasswordField
+from wtforms import StringField, SubmitField, TextAreaField, PasswordField, DateField
 from wtforms.validators import (
     InputRequired,
     Length,
@@ -11,14 +11,25 @@ from wtforms.validators import (
     EqualTo,
     ValidationError,
 )
+from datetime import datetime, timedelta
 
 
 from .models import User
 
 
 class SearchForm(FlaskForm):
-    search_query = StringField(
-        "Query", validators=[InputRequired(), Length(min=1, max=100)]
+    ticker = StringField(
+        "Ticker", validators=[InputRequired(), Length(min=1, max=100)]
+    )
+    start_date = DateField(
+        "Start Date", 
+        format='%Y-%m-%d', 
+        validators=[InputRequired()], 
+        default=(datetime.utcnow() - timedelta(days=2)).date()
+    )
+    end_date = DateField(
+        "End Date", format='%Y-%m-%d', validators=[InputRequired()],
+        default=datetime.utcnow().date()
     )
     submit = SubmitField("Search")
 

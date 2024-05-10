@@ -24,15 +24,15 @@ def index():
     form = SearchForm()
 
     if form.validate_on_submit():
-        return redirect(url_for("stocks.query_results", query=form.search_query.data))
+        return redirect(url_for("stocks.query_results", ticker=form.ticker.data, start_date=form.start_date.data, end_date=form.end_date.data))
 
     return render_template("index.html", form=form)
 
 
-@stocks.route("/search-results/<query>", methods=["GET"])
-def query_results(query):
+@stocks.route("/search-results/query?ticker=<ticker>&start_date=<start_date>&end_date=<end_date>", methods=["GET"])
+def query_results(ticker, start_date, end_date):
     try:
-        results = stocks_client.search(query)
+        results = stocks_client.search(ticker, start_date, end_date)
     except ValueError as e:
         return render_template("query.html", error_msg=str(e))
 

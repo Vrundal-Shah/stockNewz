@@ -1,23 +1,6 @@
 import requests
-
-
-# class Movie(object):
-#     def __init__(self, alpha_json, detailed=False):
-#         if detailed:
-#             # self.genres = omdb_json["Genre"]
-#             # self.director = omdb_json["Director"]
-#             # self.actors = omdb_json["Actors"]
-#             # self.plot = omdb_json["Plot"]
-#             # self.awards = omdb_json["Awards"]
-
-#         # self.title = omdb_json["Title"]
-#         # self.year = omdb_json["Year"]
-#         # self.imdb_id = omdb_json["imdbID"]
-#         # self.type = "Movie"
-#         # self.poster_url = omdb_json["Poster"]
-
-#     def __repr__(self):
-#         return self.title
+import finnhub
+from datetime import datetime
 
 class News(object):
     def __init__(self, alpha_json, detailed=False):
@@ -33,28 +16,29 @@ class News(object):
         # self.imdb_id = omdb_json["imdbID"]
         # self.type = "Movie"
         # self.poster_url = omdb_json["Poster"]
-        self.title = alpha_json["title"]
+        self.headline = alpha_json["headline"]
         self.url = alpha_json["url"]
-        self.time_published = alpha_json["time_published"]
-        self.authors = alpha_json["authors"]
-        self.summary = alpha_json["summary"]
-        self.banner_image = alpha_json["banner_image"]
+        # convert "datetime": 1569526180 to datetime object
+        self.datetime = datetime.fromtimestamp(alpha_json["datetime"])
+        print('self.datetime', self.datetime)
+        self.id = str(alpha_json["id"])
         self.source = alpha_json["source"]
-        self.topics = alpha_json["topics"]
-        self.ticker_sentiment = alpha_json["ticker_sentiment"]
-        self.overall_sentiment_label = alpha_json["overall_sentiment_label"]
-
+        self.image = alpha_json["image"]
+        self.summary = alpha_json["summary"]
+        self.related = alpha_json["related"]
 
     def __repr__(self):
-        return self.title
+        return self.id
 
 
 class StocksClient(object):
     def __init__(self, api_key):
         self.sess = requests.Session()
-        self.base_url = f"https://www.alphavantage.co/query?apikey={api_key}&"
+        # self.base_url = f"https://www.alphavantage.co/query?apikey={api_key}&"
+        self.finnhub_client = finnhub.Client(api_key=api_key)
+        print(self.finnhub_client.company_news('AAPL', _from="2020-06-01", to="2020-06-10"))
 
-    def search(self, search_string):
+    def search(self, ticker, start_date, end_date):
         """
         Searches the API for the supplied search_string, and returns
         a list of Media objects if the search was successful, or the error response
@@ -62,40 +46,33 @@ class StocksClient(object):
 
         Only use this method if the user is using the search bar on the website.
         """
-        search_string = "+".join(search_string.split())
-        page = 1
+        # page = 1
 
-        search_url = f"s={search_string}&page={page}"
+        # search_url = f"function=NEWS_SENTIMENT&tickers={tickers}"
 
-        resp = self.sess.get(self.base_url + search_url)
+        # resp = self.sess.get(self.base_url + search_url)
+        data = self.finnhub_client.company_news(ticker, _from=start_date, to=end_date)
 
-        if resp.status_code != 200:
-            raise ValueError(
-                "Search request failed; make sure your API key is correct and authorized"
-            )
+        # if resp.status_code != 200:
+        #     raise ValueError(
+        #         "Search request failed; make sure your API key is correct and authorized"
+        #     )
 
-        data = resp.json()
+        # data = resp.json()
+        print('data', data)
+        # if "Information" in data:
+        #     raise ValueError(f'[ERROR]: Error retrieving results: \'{data["Information"]}\' ')
 
-        if data["Response"] == "False":
-            raise ValueError(f'[ERROR]: Error retrieving results: \'{data["Error"]}\' ')
-
-        search_results_json = data["Search"]
-        remaining_results = int(data["totalResults"])
+        # search_results_json = data["feed"]
 
         result = []
 
         ## We may have more results than are first displayed
-        while remaining_results != 0:
-            for item_json in search_results_json:
-                result.append(Movie(item_json))
-                remaining_results -= len(search_results_json)
-            page += 1
-            search_url = f"s={search_string}&page={page}"
-            resp = self.sess.get(self.base_url + search_url)
-            if resp.status_code != 200 or resp.json()["Response"] == "False":
-                break
-            search_results_json = resp.json()["Search"]
+        for item_json in data:
+            result.append(News(item_json))
 
+        print('========================-----------------========================')
+        print(result)
         return result
 
     def retrieve_movie_by_id(self, imdb_id):

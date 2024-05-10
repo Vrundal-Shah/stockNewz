@@ -10,7 +10,7 @@ class User(db.Document, UserMixin):
     username = db.StringField(required=True, min_length=1, max_length=40, unique=True)
     email = db.EmailField(required=True, unique=True)
     password = db.StringField(required=True) 
-    profile_pic = db.ImageField() 
+    profile_pic = db.ImageField()
     def get_id(self):
         return self.username
     

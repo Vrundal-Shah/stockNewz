@@ -1,4 +1,5 @@
-{% extends "header.html" %} {% block content %}
+{% extends "header.html" %}
+{% block content %}
 
 {% if error_msg %}
   <b class="text-red-400">
@@ -8,16 +9,26 @@
 
 <div class="results-container">
   <div class="decoration-container"><div class="decoration"></div></div>
-  {% for result in results %}
-  <a 
-    href="{{ url_for('movies.movie_detail', movie_id=result.imdb_id) }}"
-    class="group movie-card"
-  >
-    <img src="{{ result.poster_url }}" class="movie-card-img" alt="missing" />
-    <h5 class="movie-card-content"> {{ result.title }}
-      <span class="text-neutral-400 font-normal"> &middot; {{ result.year }} </span>
-    </h5>
-  </a>
+  {% for news_item in results %}
+  <div class="news-card">
+    <a href="{{ news_item.url }}" target="_blank" class="group">
+      {% if news_item.image %}
+      <img src="{{ news_item.image }}" class="news-banner-img" alt="News Image" />
+      {% endif %}
+      <div class="news-content">
+        <h5>{{ news_item.headline }}</h5>
+        <p class="news-summary">{{ news_item.summary }}</p>
+        <div>
+          <span>Published: {{ news_item.datetime.strftime('%Y-%m-%d %H:%M') }}</span>
+          <span>Source: {{ news_item.source }}</span>
+        </div>
+        <div>
+          <span>ID: {{ news_item.id }}</span>
+          <span>Related: {{ news_item.related }}</span>
+        </div>
+      </div>
+    </a>
+  </div>
   {% endfor %}
 </div>
 
