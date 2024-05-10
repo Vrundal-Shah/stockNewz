@@ -39,33 +39,33 @@ def query_results(ticker, start_date, end_date):
     return render_template("query.html", results=results)
 
 
-@stocks.route("/stocks/<movie_id>", methods=["GET", "POST"])
-def movie_detail(movie_id):
-    try:
-        result = stocks_client.retrieve_movie_by_id(movie_id)
-    except ValueError as e:
-        return render_template("movie_detail.html", error_msg=str(e))
+# @stocks.route("/stocks/<movie_id>", methods=["GET", "POST"])
+# def movie_detail(movie_id):
+#     try:
+#         result = stocks_client.retrieve_movie_by_id(movie_id)
+#     except ValueError as e:
+#         return render_template("movie_detail.html", error_msg=str(e))
 
-    form = MovieReviewForm()
-    if form.validate_on_submit():
-        review = Review(
-            commenter=current_user._get_current_object(),
-            content=form.text.data,
-            date=current_time(),
-            imdb_id=movie_id,
-            image=get_b64_img(current_user.username),
-            movie_title=result.title,
-        )
+#     form = MovieReviewForm()
+#     if form.validate_on_submit():
+#         review = Review(
+#             commenter=current_user._get_current_object(),
+#             content=form.text.data,
+#             date=current_time(),
+#             imdb_id=movie_id,
+#             image=get_b64_img(current_user.username),
+#             movie_title=result.title,
+#         )
 
-        review.save()
+#         review.save()
 
-        return redirect(request.path)
+#         return redirect(request.path)
 
-    reviews = Review.objects(imdb_id=movie_id)
+#     reviews = Review.objects(imdb_id=movie_id)
 
-    return render_template(
-        "movie_detail.html", form=form, movie=result, reviews=reviews
-    )
+#     return render_template(
+#         "movie_detail.html", form=form, movie=result, reviews=reviews
+#     )
 
 
 @stocks.route("/user/<username>")

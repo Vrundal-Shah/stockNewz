@@ -12,8 +12,8 @@ class User(db.Document, UserMixin):
     password = db.StringField(required=True) 
     profile_pic = db.ImageField()
     # id of saved news articles
-    saved_news = db.ListField(db.StringField())
-    favorite_tickers = db.ListField(db.StringField())
+    saved_news = db.ListField(db.StringField(), default=list)
+    favorite_tickers = db.ListField(db.StringField(), default=list)
     def get_id(self):
         return self.username
     

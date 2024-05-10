@@ -1,25 +1,33 @@
-{% extends "header.html" %}
-{% block content %}
-
-{% if error_msg %}
-  <b class="text-red-400">
-    {{ error_msg }}
-  </b>
+{% extends "header.html" %} {% block content %} {% if error_msg %}
+<b class="text-red-400"> {{ error_msg }} </b>
 {% endif %}
 
 <div class="results-container">
   <div class="decoration-container"><div class="decoration"></div></div>
   {% for news_item in results %}
   <div class="news-card">
+    <a
+      class="bookmark-icon"
+      href="{{ url_for('users.save_bookmark', news_id=news_item.id, next=request.url) }}"
+    >
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+  </a>
     <a href="{{ news_item.url }}" target="_blank" class="group">
       {% if news_item.image %}
-      <img src="{{ news_item.image }}" class="news-banner-img" alt="News Image" />
+      <img
+        src="{{ news_item.image }}"
+        class="news-banner-img"
+        alt="News Image"
+      />
       {% endif %}
       <div class="news-content">
         <h5>{{ news_item.headline }}</h5>
         <p class="news-summary">{{ news_item.summary }}</p>
         <div>
-          <span>Published: {{ news_item.datetime.strftime('%Y-%m-%d %H:%M') }}</span>
+          <span
+            >Published: {{ news_item.datetime.strftime('%Y-%m-%d %H:%M')
+            }}</span
+          >
           <span>Source: {{ news_item.source }}</span>
         </div>
         <div>
@@ -31,5 +39,30 @@
   </div>
   {% endfor %}
 </div>
+
+<script>
+  function toggleBookmark(newsId, element) {
+    const icon = element.firstChild;
+    icon.classList.toggle("saved");
+
+    fetch("/users/save_bookmark", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        newsId: newsId,
+        saved: icon.classList.contains("saved"),
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>
 
 {% endblock %}

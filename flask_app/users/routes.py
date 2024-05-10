@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, render_template, flash, request
+from flask import Blueprint, redirect, url_for, render_template, flash, request, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 import base64,io
 from .. import bcrypt
@@ -65,6 +65,45 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('stocks.index'))
+
+# @users.route('/save_bookmark')
+# @login_required
+# def save_bookmark():
+#     data = request.get_json()
+#     news_id = data['newsId']  # Corrected access to data with dictionary keys
+
+#     # Check if the news is already saved by checking if id is in user.saved_news
+#     print('before current_user.saved_news: ', current_user.saved_news)
+#     if news_id in current_user.saved_news:
+#         current_user.saved_news.remove(news_id)
+#         saved = False  # Indicates the news was removed from the saved list
+#     else:
+#         current_user.saved_news.append(news_id)
+#         print('current_user.saved_news saved: ', current_user.saved_news)
+#         saved = True   # Indicates the news was added to the saved list
+#     current_user.save()
+
+#     return jsonify({'status': 'success', 'saved': saved})
+
+@users.route('/save_bookmark/<news_id>')
+@login_required
+def save_bookmark(news_id):
+    next_url = request.args.get('next', url_for('stocks.index'))
+    # data = request.get_json()
+    # news_id = data['newsId']  # Corrected access to data with dictionary keys
+
+    # Check if the news is already saved by checking if id is in user.saved_news
+    print('before current_user.saved_news: ', current_user.saved_news)
+    if news_id in current_user.saved_news:
+        current_user.saved_news.remove(news_id)
+        saved = False  # Indicates the news was removed from the saved list
+    else:
+        current_user.saved_news.append(news_id)
+        print('current_user.saved_news saved: ', current_user.saved_news)
+        saved = True   # Indicates the news was added to the saved list
+    current_user.save()
+
+    return redirect(next_url)
 
 
 @users.route("/account", methods=["GET", "POST"])
