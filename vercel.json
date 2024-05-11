@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/flask_app/run.py"
+      "dest": "/flask_app"
     }
   ]
 }
