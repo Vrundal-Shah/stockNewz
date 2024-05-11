@@ -59,8 +59,11 @@ def save_news():
             new_news.save()
     return redirect(next_url)
 
-@stocks.route("/search-results/query?ticker=<ticker>&start_date=<start_date>&end_date=<end_date>", methods=["GET"])
+@stocks.route("/search-results/<ticker>/<start_date>/<end_date>", methods=["GET"])
 def query_results(ticker, start_date, end_date):
+    # ticker = request.args.get('ticker', default=None, type=str)
+    # start_date = request.args.get('start_date', default=None, type=str)
+    # end_date = request.args.get('end_date', default=None, type=str)
     try:
         if current_user.is_authenticated:
             results = stocks_client.search(ticker, start_date, end_date, current_user)
