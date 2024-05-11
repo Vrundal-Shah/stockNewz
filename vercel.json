@@ -2,18 +2,13 @@
   "version": 2,
   "builds": [
     {
-      "src": "/flask_app/run.py",
+      "src": "run.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/flask_app/stocks/routes.py",
-      "dest": "/flask_app"
-    },
-    {
-      "src": "/flask_app/users/routes.py",
-      "dest": "/flask_app"
+      "src": "/(.*)",
+      "dest": "run.py"
     }
-  ]
 }
