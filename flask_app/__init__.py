@@ -20,7 +20,7 @@ import urllib.parse
 # local
 from .client import StocksClient
 
-if os.getenv('API_KEY'):
+if os.environ.get('API_KEY'):
     API_KEY = os.getenv('API_KEY')
 
 db = MongoEngine()
@@ -38,12 +38,12 @@ def custom_404(e):
 def create_app(test_config=None):
     app = Flask(__name__)
 
-    app.config["MONGODB_HOST"] = os.getenv("MONGO_URI")
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+    app.config["MONGODB_HOST"] = os.environ.get("MONGO_URI")
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     if test_config is not None:
         app.config.update(test_config)
 
-    parsed = urllib.parse.urlparse(os.getenv("MONGO_URI"))
+    parsed = urllib.parse.urlparse(os.environ.get("MONGO_URI"))
 
     # app.config["MONGODB_SETTINGS"] = {
     #     'db': 'Cluster0',  # Removes the leading '/' from the path
