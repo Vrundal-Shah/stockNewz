@@ -18,15 +18,21 @@ Create a web application that allows users to search for and access real-time an
 - **Update Ticker Form**: Changes the users ticker preferences.
 
 ## Q4: Routes/Blueprints Description
+
 ### User Management Blueprint:
-- **/register**: Registration page.
-- **/login**: Login page.
-- **/logout**: Logout functionality.
-- **/profile**: Profile settings page.
+- **/register**: Provides a registration form and handles user registration. Redirects authenticated users to the home page.
+- **/login**: Provides a login form and handles user authentication. Redirects authenticated users to their account page.
+- **/logout**: Handles user logout and redirects to the home page.
+- **/save_bookmark/<news_id>**: Allows authenticated users to save or unsave news articles as bookmarks.
+- **/personalized_dashboard**: Displays personalized dashboard for authenticated users, showing saved news and favorite ticker information.
+- **/account**: Provides forms to update username, profile picture, and save favorite tickers. Handles updates to user account settings.
 
 ### Stock Information Blueprint:
-- **/search**: Search for stocks and display results.
-- **/stock/<ticker>**: Display detailed information and news about a specific stock.
+- **/**: Home page that displays a search form and handles redirection to display query results based on user input.
+- **/save_news**: Saves news articles to the database, handles missing parameters, and redirects.
+- **/search-results/<ticker>/<start_date>/<end_date>**: Displays search results for a specific ticker and date range, shows company financials, handles both authenticated and unauthenticated users.
+- **/user/<username>**: Displays detailed user information including reviews and profile picture, handles non-existent users.
+
 
 ## Q5: Data Storage and Retrieval from MongoDB
 - **User Model**: Stores user-specific information, including a unique username, email, a password (likely hashed for security), an optional image for the profile picture, a list of saved news article IDs, and a list of favorite stock tickers.
