@@ -36,3 +36,4 @@ urllib3==1.26.9
 waitress==2.1.2
 Werkzeug==2.0.3
 WTForms==3.0.1
+finnhub-python==2.4.19

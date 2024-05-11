@@ -86,3 +86,8 @@ class UpdateProfilePicForm(FlaskForm):
     ])
     submit_picture = SubmitField('Update Profile Picture')
 
+class SaveTickerForm(FlaskForm):
+    ticker1 = StringField('Ticker Symbol 1', validators=[InputRequired(), Length(min=1, max=10)])
+    ticker2 = StringField('Ticker Symbol 2', validators=[InputRequired(), Length(min=1, max=10)])
+    ticker3 = StringField('Ticker Symbol 3', validators=[InputRequired(), Length(min=1, max=10)])
+    submit_tickers = SubmitField('Save Tickers')
