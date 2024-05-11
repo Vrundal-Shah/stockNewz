@@ -21,24 +21,25 @@ def get_b64_img(username):
 # TODO: implement
 @users.route("/register", methods=["GET", "POST"])
 def register():
+    form = RegistrationForm()
     if current_user.is_authenticated:
         
         return redirect(url_for('stocks.index'))
 
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+    if request.method == "POST":
+      if form.validate_on_submit():
+          
+          hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
 
-        new_user = User(
-            username=form.username.data,
-            email=form.email.data,
-            password=hashed_password
-        )
-        # new_user.save()
+          new_user = User(
+              username=form.username.data,
+              email=form.email.data,
+              password=hashed_password
+          )
+          new_user.save()
 
-        flash('Your account has been created! You can log in the website now ', 'success')
-        return redirect(url_for('users.login')) 
+          flash('Your account has been created! You can log in the website now ', 'success')
+          return redirect(url_for('users.login')) 
 
     return render_template('register.html', form=form)
 
