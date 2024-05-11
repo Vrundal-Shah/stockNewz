@@ -38,7 +38,7 @@ def register():
           )
           new_user.save()
 
-          flash('Your account has been created! You can log in the website now ', 'success')
+          # flash('Your account has been created! You can log in the website now ', 'success')
           return redirect(url_for('users.login')) 
 
     return render_template('register.html', form=form)
