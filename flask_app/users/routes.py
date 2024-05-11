@@ -35,7 +35,7 @@ def register():
             email=form.email.data,
             password=hashed_password
         )
-        new_user.save()
+        # new_user.save()
 
         flash('Your account has been created! You can log in the website now ', 'success')
         return redirect(url_for('users.login')) 
