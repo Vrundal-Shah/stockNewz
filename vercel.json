@@ -8,8 +8,12 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/flask_app"
+      "src": "/flask_app/stocks/(.*)",
+      "dest": "/flask_app/stocks"
+    },
+    {
+      "src": "/flask_app/users/(.*)",
+      "dest": "/flask_app/users"
     }
   ]
 }
