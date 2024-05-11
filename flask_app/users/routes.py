@@ -27,7 +27,7 @@ def register():
         return redirect(url_for('stocks.index'))
 
     if request.method == "POST":
-      if form.validate_on_submit():
+      if form.submit.data and form.validate():
           
           hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
 
