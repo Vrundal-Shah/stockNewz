@@ -1,0 +1,152 @@
+{% extends "header.html" %} {% block content %}
+<style>
+  /* Container and basic layout */
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  /* Typography and color */
+  h1,
+  h2 {
+    color: white;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  p,
+  li {
+    color: #333;
+  }
+
+  /* News articles styling */
+  .news-item {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  .news-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    margin-right: 20px;
+    object-fit: cover;
+  }
+
+  .news-header div {
+    flex-grow: 1;
+  }
+
+  a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Tickers financial information styling */
+  .financial-info {
+    margin-top: 40px;
+  }
+
+  .ticker-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .text-sm {
+    font-size: 0.875rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  ul li strong {
+    font-weight: bold;
+  }
+
+  .text-gray-400 {
+    color: #aaa;
+  }
+
+  .text-blue-500 {
+    color: #007bff;
+  }
+
+  .text-blue-500:hover {
+    color: #0056b3;
+  }
+</style>
+
+<div class="container">
+  <h1>Personalized Dashboard</h1>
+
+  <!-- Saved News Articles -->
+  <div class="news-articles">
+    <h2>Saved News Articles</h2>
+    {% if saved_news %} {% for news in saved_news %}
+    <div class="news-item">
+      <div class="news-header flex">
+        <img src="{{ news.image }}" alt="News Image" />
+        <div>
+          <h3>{{ news.headline }}</h3>
+          <p>{{ news.summary }}</p>
+          <a href="{{ news.url }}">Read more</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <p class="text-gray-400">No saved news articles.</p>
+    {% endif %}
+  </div>
+
+  <!-- Favorite Tickers Financial Information -->
+  <div class="financial-info">
+    <h2>Favorite Tickers Financial Information</h2>
+    {% if tickers %}
+    <div class="grid">
+      {% for ticker in tickers %}
+      <div class="ticker-card">
+        <h3>{{ ticker.symbol | upper }}</h3>
+        <ul>
+          {% for key, value in ticker.metric.items() %}
+          <li>
+            <strong>{{ key | replace('_', ' ') | title }}:</strong> {{ value }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400">No financial information available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

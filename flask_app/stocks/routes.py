@@ -1,11 +1,12 @@
 import base64,io
 from io import BytesIO
+from datetime import datetime
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import current_user
 
 from .. import stocks_client
 from ..forms import MovieReviewForm, SearchForm
-from ..models import User, Review
+from ..models import User, Review, News
 from ..utils import current_time
 
 stocks = Blueprint("stocks", __name__)
@@ -28,15 +29,49 @@ def index():
 
     return render_template("index.html", form=form)
 
+@stocks.route("/save_news", methods=["GET"])
+def save_news():
+    news_id = request.args.get('news_id')
+    next_url = request.args.get('next_url')
+
+    if not news_id or not next_url:
+        # Handle error: missing news_id or next_url
+        return "Missing news ID or Next URL", 400  # Example error handling
+
+    news_data = stocks_client.get_news_by_id(news_id)
+    print('news_data', news_data)
+
+    if news_data:
+        print('news_data', news_data)
+        existing_news = News.objects(news_id=news_data['id']).first()
+        if existing_news is None:
+            # Create the News model object and push to News collection in MongoDB
+            new_news = News(
+                headline=news_data['headline'],
+                url=news_data['url'],
+                datetime= news_data['datetime'],
+                news_id=news_id,
+                source=news_data['source'],
+                image=news_data.get('image', "https://plus.unsplash.com/premium_photo-1688561383440-feef3fee567d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fG5ld3MlMjBtZWRpYXxlbnwwfHwwfHx8MA%3D%3D"),
+                summary=news_data['summary'],
+                related=news_data['related']
+            )
+            new_news.save()
+    return redirect(next_url)
 
 @stocks.route("/search-results/query?ticker=<ticker>&start_date=<start_date>&end_date=<end_date>", methods=["GET"])
 def query_results(ticker, start_date, end_date):
     try:
-        results = stocks_client.search(ticker, start_date, end_date)
+        if current_user.is_authenticated:
+            results = stocks_client.search(ticker, start_date, end_date, current_user)
+        else:
+            results = stocks_client.search(ticker, start_date, end_date, None)
+          
+        company_basic_financials = stocks_client.get_ticker_basic_financials(ticker)
     except ValueError as e:
         return render_template("query.html", error_msg=str(e))
 
-    return render_template("query.html", results=results)
+    return render_template("query.html", results=results, company_basic_financials=company_basic_financials)
 
 
 # @stocks.route("/stocks/<movie_id>", methods=["GET", "POST"])

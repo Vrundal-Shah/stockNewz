@@ -2,35 +2,201 @@
 <b class="text-red-400"> {{ error_msg }} </b>
 {% endif %}
 
+<style>
+  .container h1 {
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  .container h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  .key-metrics-heading {
+    color: #000000 !important;
+  }
+
+  .container {
+    width: 80%;
+    margin: auto;
+    padding-top: 20px;
+    color: #333;
+    font-family: Arial, sans-serif;
+  }
+
+  .quick-metrics {
+    background: #f1f1f1;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .accordion {
+    margin-bottom: 20px;
+  }
+
+  .accordion-button {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: background-color 0.3s, color 0.3s;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .accordion-button:hover {
+    background-color: #ddd;
+  }
+
+  .accordion-button.active {
+    background-color: #ccc;
+  }
+
+  .panel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    border-left: 3px solid #ccc;
+  }
+
+  .panel p {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .results-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+
+  .news-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+
+  .news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .news-banner-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .news-content,
+  .news-footer {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 15px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .news-content h5 {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-top: 0;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9);
+  }
+
+  .news-footer span {
+    font-size: 0.85em;
+    display: block;
+  }
+
+  .bookmark-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #000;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  .bookmark-icon>a>i.saved {
+    color: #fff;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  .error-message {
+    color: #ff6b6b;
+    background-color: #ffebeb;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="financials-container">
+  <div class="container">
+    <h1>Financial Overview for {{ company_basic_financials.symbol }}</h1>
+    <div class="quick-metrics">
+      <h2 class="key-metrics-heading">Key Metrics</h2>
+      <p><strong>10-Day Avg Trading Volume:</strong> {{ company_basic_financials.metric['10DayAverageTradingVolume'] }}
+      </p>
+      <p><strong>52-Week High:</strong> {{ company_basic_financials.metric['52WeekHigh'] }}</p>
+      <p><strong>52-Week Low:</strong> {{ company_basic_financials.metric['52WeekLow'] }}</p>
+      <p><strong>52-Week Price Return (Daily):</strong> {{ company_basic_financials.metric['52WeekPriceReturnDaily'] }}%
+      </p>
+      <p><strong>Beta:</strong> {{ company_basic_financials.metric['beta'] }}</p>
+    </div>
+    <div class="accordion">
+      <h2>Annual Metrics</h2>
+      {% for key, values in company_basic_financials.series['annual'].items() %}
+      <button class="accordion-button">{{ key }}</button>
+      <div class="panel">
+        {% for value in values %}
+        <p>{{ value['period'] }}: {{ value['v'] }}</p>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
 <div class="results-container">
-  <div class="decoration-container"><div class="decoration"></div></div>
   {% for news_item in results %}
   <div class="news-card">
-    <a
-      class="bookmark-icon"
-      href="{{ url_for('users.save_bookmark', news_id=news_item.id, next=request.url) }}"
-    >
-      <i class="fa fa-bookmark" aria-hidden="true"></i>
-  </a>
-    <a href="{{ news_item.url }}" target="_blank" class="group">
+    <div class="bookmark-icon">
+      <a href="{{ url_for('users.save_bookmark', news_id=news_item.id, next=request.url) }}"
+        onclick="toggleBookmark('{{ news_item.id }}', this)">
+        <i class="fas fa-bookmark  {% if news_item.is_bookmarked == 0 %} saved {% endif %}"></i>
+      </a>
+    </div>
+    <a href="{{ news_item.url }}" target="_blank" class="news-link">
       {% if news_item.image %}
-      <img
-        src="{{ news_item.image }}"
-        class="news-banner-img"
-        alt="News Image"
-      />
+      <img src="{{ news_item.image }}" alt="News Image" class="news-banner-img">
       {% endif %}
       <div class="news-content">
         <h5>{{ news_item.headline }}</h5>
-        <p class="news-summary">{{ news_item.summary }}</p>
-        <div>
-          <span
-            >Published: {{ news_item.datetime.strftime('%Y-%m-%d %H:%M')
-            }}</span
-          >
+        <p>{{ news_item.summary }}</p>
+        <div class="news-footer">
+          <span>Published: {{ news_item.datetime.strftime('%Y-%m-%d %H:%M') }}</span>
           <span>Source: {{ news_item.source }}</span>
-        </div>
-        <div>
           <span>ID: {{ news_item.id }}</span>
           <span>Related: {{ news_item.related }}</span>
         </div>
@@ -41,6 +207,22 @@
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var acc = document.getElementsByClassName("accordion-button");
+    var i;
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    }
+  });
+
   function toggleBookmark(newsId, element) {
     const icon = element.firstChild;
     icon.classList.toggle("saved");
@@ -63,6 +245,10 @@
         console.error("Error:", error);
       });
   }
+
+  window.addEventListener('load', () => {
+    fetchSavedNews();
+  });
 </script>
 
 {% endblock %}
